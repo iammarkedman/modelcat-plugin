@@ -32,6 +32,7 @@ class modelcat_ajax {
    */
   static function getresults() {
     global $post;
+    global $dynamic_featured_image;
 
     $q = new WP_Query();
     $q->query( array(
@@ -43,20 +44,53 @@ class modelcat_ajax {
     while( $q->have_posts() ) {
       $q->the_post();
 
+      // meta info
       $meta = get_post_meta( $post->ID );
       $metainfo = array();
       foreach(array("gender", "date-of-birth") as $key) {
         if( !empty( $meta["wpcf-".$key] ) && is_array( $meta["wpcf-".$key] )) {
-          $metainfo[$key] = $meta["wpcf-".$key][0];
+          switch( $key ) {
+            case "date-of-birth":
+              $t = $meta["wpcf-".$key][0];
+              $metainfo["date-of-birth"] = strftime("%d.%m.%Y", $t);
+              $metainfo["age"] = floor((time() - $t) / (60*60*24*365));
+              break;
+            default:
+              $metainfo[$key] = $meta["wpcf-".$key][0];
+          }
         } else {
           $metainfo[$key] = "";
         }
       }
 
+      // photos
+      $images = array();
+      $thumb_id = get_post_thumbnail_id( $post->ID );
+      if( $thumb_id ) {
+        $imgurl_thumb = wp_get_attachment_image_src( $thumb_id, "thumbnail" );
+        $imgurl_full = wp_get_attachment_image_src( $thumb_id, "full" );
+        array_push( $images, array(
+          "thumb" => $imgurl_thumb[0],
+          "full" => $imgurl_full[0]
+        ));
+      }
+      if( class_exists('Dynamic_Featured_Image') ) {
+        $featured_images = $dynamic_featured_image->get_featured_images( $post->ID );
+        foreach( $featured_images as $img ) {
+          $i = array(
+            "thumb" => $img["thumb"],
+            "full" => $img["full"]
+          );
+          array_push( $images, $i );
+        }
+      }
+
+      // add to results
       array_push( $results, array(
         "id" => $post->ID,
         "name" => $post->post_title,
-        "info" => $metainfo
+        "info" => $metainfo,
+        "images" => $images
       ));
     }
 
