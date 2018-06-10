@@ -11,6 +11,7 @@ class modelcat_ajax {
     add_action( 'wp_ajax_getresults', __CLASS__ .'::getresults' );
     add_action( 'wp_ajax_nopriv_getresultsname_of_action', __CLASS__ .'::getresults' );
   }
+
   /**
    * Enqueue scripts
    */
@@ -28,6 +29,32 @@ class modelcat_ajax {
   }
 
   /**
+   * Return WP_Query metaquery parameters
+   */
+  static function form_metaqueries( $s ) {
+    $metaquery = array();
+
+    // ---------------------------------------------------------------------------
+    // gender
+    if( !empty( $s["gender_female"] ) || !empty( $s["gender_male"] )) {
+      $values = array();
+      if( !empty( $s["gender_female"] )) {
+        array_push( $values, 2 );
+      }
+      if( !empty( $s["gender_male"] )) {
+        array_push( $values, 1 );
+      }
+      array_push( $metaquery, array(
+        'key' => 'wpcf-gender',
+        'value' => $values,
+        'compare' => 'IN'
+      ));
+    }
+
+    return $metaquery;
+  }
+
+  /**
    * AJAX query: search results
    */
   static function getresults() {
@@ -35,9 +62,21 @@ class modelcat_ajax {
     global $dynamic_featured_image;
 
     $q = new WP_Query();
+
+    $s = $_POST['s'];
+    if( !empty( $s )) {
+      $metaquery = modelcat_ajax::form_metaqueries($s);
+    } else {
+      $metaquery = array();
+    }
+
     $q->query( array(
       'post_type' => 'model',
-      'posts_per_page' => 1000
+      'posts_per_page' => 1000,
+      'meta_query' => array(
+        'relation' => 'AND',
+        $metaquery
+      )
     ));
 
     $results = array();
@@ -65,10 +104,12 @@ class modelcat_ajax {
 
       // photos
       $images = array();
+      $mainthumb = "";
       $thumb_id = get_post_thumbnail_id( $post->ID );
       if( $thumb_id ) {
         $imgurl_thumb = wp_get_attachment_image_src( $thumb_id, "thumbnail" );
         $imgurl_full = wp_get_attachment_image_src( $thumb_id, "full" );
+        $mainthumb = $imgurl_full[0];
         array_push( $images, array(
           "thumb" => $imgurl_thumb[0],
           "full" => $imgurl_full[0]
@@ -90,7 +131,8 @@ class modelcat_ajax {
         "id" => $post->ID,
         "name" => $post->post_title,
         "info" => $metainfo,
-        "images" => $images
+        "images" => $images,
+        "mainthumb" => $mainthumb
       ));
     }
 

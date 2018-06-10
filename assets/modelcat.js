@@ -8,6 +8,12 @@ function nano(template, data) {
   });
 }
 
+var searchResult = '<div class="col-4"><img src="{mainthumb}" class="img-fluid"/>{name}</div>';
+
+var modelcatSearchDefaultSettings = {
+  form: "#searchForm"
+};
+
 /**
  * Modelcat
  */
@@ -16,17 +22,43 @@ function nano(template, data) {
   /**
    * Run search
    */
-  $.fn.modelcatSearch = function() {
+  $.fn.modelcatSearch = function(options) {
+    options = $.extend({}, modelcatSearchDefaultSettings, options || {});
+    var $form = $(options.form);
+
     return this.each(function() {
       var $root = $(this);
-      
+
+      var datastring = "action=getresults&" + $form.serialize();
       $.ajax({
         url: modelcat.ajax_url,
         method: "POST",
-        data: { "action": "getresults", "foo": "bar" }
+        data: datastring
       })
         .done(function(response) {
-          console.log("DONE", response);
+          $root.empty();
+
+          $i = 0;
+          $html = "";
+          $.each( response, function(idx, data) {
+            if ($i === 0) {
+              $html += '<div class="row">';
+            }
+            $html += nano(searchResult, data);
+            if ($i === 2) {
+              $html += '</div>';
+              $root.append($html);
+              $html = "";
+            }
+            if( ++$i === 3) {
+              $i = 0;
+            }
+          });
+
+          if ($i > 0) {
+            $html += '</div>';
+            $root.append($html);
+          }
         })
         .fail(function(response) {
           console.log("FAIL", response);
