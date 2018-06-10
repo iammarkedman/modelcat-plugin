@@ -73,6 +73,8 @@ class modelcat_ajax {
     $q->query( array(
       'post_type' => 'model',
       'posts_per_page' => 1000,
+      'order' => 'ASC',
+      'orderby' => 'post_title',
       'meta_query' => array(
         'relation' => 'AND',
         $metaquery
@@ -132,7 +134,8 @@ class modelcat_ajax {
         "name" => $post->post_title,
         "info" => $metainfo,
         "images" => $images,
-        "mainthumb" => $mainthumb
+        "mainthumb" => $mainthumb,
+        "permalink" => get_permalink( $post->ID )
       ));
     }
 
