@@ -128,10 +128,18 @@ class modelcat_ajax {
         }
       }
 
+      // hide surname
+      $names = preg_split("/[\ ]+/", $post->post_title);
+      if( count($names) < 2 ) {
+        $name = $names[0];
+      } else {
+        $name = $names[0] . " " . substr($names[count($names)-1], 0, 1);
+      }
+
       // add to results
       array_push( $results, array(
         "id" => $post->ID,
-        "name" => $post->post_title,
+        "name" => $name,
         "info" => $metainfo,
         "images" => $images,
         "mainthumb" => $mainthumb,

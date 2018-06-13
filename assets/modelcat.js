@@ -10,7 +10,12 @@ function nano(template, data) {
 
 var ntmpl_searchResult = 
   '<div class="col-4"><div class="item-holder"><a href="{permalink}">' +
+    '<div class="item-img">' +
     '<img src="{mainthumb}" class="img-fluid"/>' + 
+    '<div class="overlay-holder"><div class="overlay">' +
+    '<ul><li>Age: {info.age}</li></ul>' +
+    '</div></div>' +
+    '</div>' +
     '<div class="name">{name}</div></a>' +
     '<div class="heart" data-id="{id}"><i class="far fa-heart"></i></div>' +
   '</div></div>';
@@ -23,6 +28,13 @@ var modelcatSearchDefaultSettings = {
  * Modelcat
  */
 (function($) {
+
+  /**
+   * Update timestamp for last taken action.
+   */
+  $.updateLastActionTime = function() {
+    localStorage.setItem("favtch", Date.now());
+  }
 
   /**
    * Bind add/remote from favorites
@@ -38,10 +50,12 @@ var modelcatSearchDefaultSettings = {
         if( idx != -1 ) {
           favs.splice(idx, 1);
           localStorage.setItem("fav", JSON.stringify(favs));
+          $.updateLastActionTime();
           $root.find("i").removeClass("fas").addClass("far");
         } else {
           favs.push(id);
           localStorage.setItem("fav", JSON.stringify(favs));
+          $.updateLastActionTime();
           $root.find("i").removeClass("far").addClass("fas");
         }
       });
@@ -75,10 +89,12 @@ var modelcatSearchDefaultSettings = {
         if( inFavs ) {
           favs.splice(idx, 1);
           localStorage.setItem("fav", JSON.stringify(favs));
+          $.updateLastActionTime();
           $root.html('<i class="far fa-heart"></i> Add to favorites');
         } else {
           favs.push(id);
           localStorage.setItem("fav", JSON.stringify(favs));
+          $.updateLastActionTime();
           $root.html('<i class="fas fa-heart"></i> Remove from favorites');
         }
       });
@@ -149,6 +165,7 @@ var modelcatSearchDefaultSettings = {
         .done(function(response) {
           // save to localStorage as last results
           localStorage.setItem("res", JSON.stringify(response));
+          $.updateLastActionTime();
 
           // render
           $root.renderSearchResults( response );
