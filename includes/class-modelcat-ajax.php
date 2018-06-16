@@ -8,8 +8,8 @@ class modelcat_ajax {
   static function setup() {
     $action = 'getresults';
     add_action( 'wp_enqueue_scripts', __CLASS__ .'::enqueue_scripts' );
-    add_action( 'wp_ajax_getresults', __CLASS__ .'::getresults' );
-    add_action( 'wp_ajax_nopriv_getresultsname_of_action', __CLASS__ .'::getresults' );
+    add_action( 'wp_ajax_getresults', __CLASS__ .'::ajax_getresults' );
+    add_action( 'wp_ajax_nopriv_getresultsname_of_action', __CLASS__ .'::ajax_getresults' );
   }
 
   /**
@@ -55,15 +55,15 @@ class modelcat_ajax {
   }
 
   /**
-   * AJAX query: search results
+   * Get search results with params
    */
-  static function getresults() {
+  static function getresults($params) {
     global $post;
     global $dynamic_featured_image;
 
     $q = new WP_Query();
 
-    $metaquery = modelcat_ajax::form_metaqueries($_POST);
+    $metaquery = modelcat_ajax::form_metaqueries($params);
 
     $q->query( array(
       'post_type' => 'model',
@@ -142,6 +142,14 @@ class modelcat_ajax {
       ));
     }
 
+    return $results;
+  }
+
+  /**
+   * AJAX query: search results
+   */
+  static function ajax_getresults() {
+    $results = modelcat_ajax::getresults($_POST);
     $json = json_encode( $results );
     header('Content-Type: application/json');
     die( $json );

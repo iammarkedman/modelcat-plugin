@@ -113,6 +113,23 @@ var modelcatUpdateSearchDefaultSettings = {
   }
 
   /**
+   * Init fav states and bind clicks, run after search result rendering
+   */
+  $.modelcatInitFavorites = function($root) {
+    // check favorite states
+    var favs = JSON.parse(localStorage.getItem("fav"));
+    $root.find(".heart").each( function() {
+      var id = $(this).data("id");
+      if( favs.includes(id) ) {
+        $(this).find("i").removeClass("far").addClass("fas");
+      }
+    });
+
+    // bind hearts
+    $root.find(".heart").bindFavorite();
+  }
+
+  /**
    * Render search results
    */
   $.fn.renderSearchResults = function(results) {
@@ -143,17 +160,8 @@ var modelcatUpdateSearchDefaultSettings = {
         $root.append($html);
       }
 
-      // check favorite states
-      var favs = JSON.parse(localStorage.getItem("fav"));
-      $root.find(".heart").each( function() {
-        var id = $(this).data("id");
-        if( favs.includes(id) ) {
-          $(this).find("i").removeClass("far").addClass("fas");
-        }
-      });
-
-      // bind hearts
-      $root.find(".heart").bindFavorite();
+      // init favorites
+      $.modelcatInitFavorites($root);
     });
   }
 
@@ -164,7 +172,7 @@ var modelcatUpdateSearchDefaultSettings = {
     options = $.extend({}, modelcatSearchDefaultSettings, options || {});
     var opt = [];
     $.each(options, function(idx, val) {
-      opt.push(idx + "=" + val);
+      opt.push(idx + "=" + encodeURIComponent(val));
     });
     var optionsStr = opt.join("&");
 
@@ -205,7 +213,20 @@ var modelcatUpdateSearchDefaultSettings = {
         searchOpts[$(this).data("query")] = $(this).data("val");
       });
 
+      // Run search: update results
       $(options.results).modelcatSearch(searchOpts);
+
+      // Update browser location
+      var urlParams = [];
+      $.each( searchOpts, function( k, v ) {
+        urlParams.push( k + "=" + encodeURIComponent(v) );
+      });
+      if (typeof (history.pushState) != "undefined") {
+        var title = "Search";
+        var url = document.location.protocol +"//"+ document.location.hostname + document.location.pathname;
+        var obj = { Title: title, Url: url + "?" + urlParams.join("&") };
+        history.pushState(obj, obj.Title, obj.Url);
+      }
     });
   }
  
