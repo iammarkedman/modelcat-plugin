@@ -48,6 +48,21 @@ var modelcatUpdateSearchDefaultSettings = {
   }
 
   /**
+   * Clear selected models
+   */
+  $.clearSelectedModels = function() {
+    localStorage.setItem("fav", JSON.stringify([]));
+    $(document).find(".heart").each( function() {
+      $(this).find("i").removeClass("fas").addClass("far");
+    });
+    var $singleFav = $(".single-favorite");
+    if( $singleFav.length > 0 ) {
+      $singleFav.html('<i class="far fa-heart"></i> Add to favorites');
+    }
+    $(document).trigger("selectionChanged");
+  }
+
+  /**
    * Bind add/remote from favorites
    */
   $.fn.bindFavorite = function() {
@@ -69,6 +84,8 @@ var modelcatUpdateSearchDefaultSettings = {
           $.updateLastActionTime();
           $root.find("i").removeClass("far").addClass("fas");
         }
+
+        $(document).trigger("selectionChanged");
       });
     });
   }
@@ -108,6 +125,8 @@ var modelcatUpdateSearchDefaultSettings = {
           $.updateLastActionTime();
           $root.html('<i class="fas fa-heart"></i> Remove from favorites');
         }
+
+        $(document).trigger("selectionChanged");
       });
     });
   }
@@ -127,6 +146,7 @@ var modelcatUpdateSearchDefaultSettings = {
 
     // bind hearts
     $root.find(".heart").bindFavorite();
+    $(document).trigger("selectionChanged");
   }
 
   /**
@@ -261,5 +281,24 @@ var modelcatUpdateSearchDefaultSettings = {
     });
   }
 
+  /**
+   * Update model selection
+   */
+  $.fn.updateModelSelection = function() {
+    return this.each(function() {
+      var $root = $(this);
+      var favs = JSON.parse(localStorage.getItem("fav"));
+      var l = favs.length;
+      var str = l + " " + (l === 1 ? "model" : "models");
+      $root.find(".numSelected").html(str);
+
+      if( l < 1 ) {
+        $root.removeClass("anySelected");
+      } else {
+        $root.addClass("anySelected");
+      }
+    });
+  }
+ 
 })(jQuery);
 
