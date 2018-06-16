@@ -21,8 +21,19 @@ var ntmpl_searchResult =
   '</div></div>';
 
 var modelcatSearchDefaultSettings = {
+  gender: "all"
+};
+
+var modelcatInitDefaultSettings = {
+  results: "#results",
   form: "#searchForm"
 };
+
+var modelcatUpdateSearchDefaultSettings = {
+  results: "#results",
+  form: "#searchForm"
+};
+
 
 /**
  * Modelcat
@@ -151,20 +162,22 @@ var modelcatSearchDefaultSettings = {
    */
   $.fn.modelcatSearch = function(options) {
     options = $.extend({}, modelcatSearchDefaultSettings, options || {});
-    var $form = $(options.form);
+    var opt = [];
+    $.each(options, function(idx, val) {
+      opt.push(idx + "=" + val);
+    });
+    var optionsStr = opt.join("&");
 
     return this.each(function() {
       var $root = $(this);
 
-      var datastring = "action=getresults&" + $form.serialize();
+      var datastring = "action=getresults&" + optionsStr;
       $.ajax({
         url: modelcat.ajax_url,
         method: "POST",
         data: datastring
       })
         .done(function(response) {
-          // save to localStorage as last results
-          localStorage.setItem("res", JSON.stringify(response));
           $.updateLastActionTime();
 
           // render
@@ -175,6 +188,57 @@ var modelcatSearchDefaultSettings = {
         });
     });
   };
+
+  /**
+   * Update search params with current selections
+   */
+  $.fn.modelcatUpdateSearchParams = function( options ) {
+    options = $.extend({}, modelcatUpdateSearchDefaultSettings, options || {});
+ 
+    return this.each(function() {
+      var $root = $(this);
+      var searchOpts = {};
+
+      // gender
+      var $form = $(options.form);
+      $form.find("input.searchGender:checked").each( function() {
+        searchOpts[$(this).data("query")] = $(this).data("val");
+      });
+
+      $(options.results).modelcatSearch(searchOpts);
+    });
+  }
+ 
+  /**
+   * Init search form
+   */
+  $.fn.modelcatInitSearchForm = function( options ) {
+    options = $.extend({}, modelcatInitDefaultSettings, options || {});
+ 
+    return this.each(function() {
+      var $root = $(this);
+
+      // gender
+      $root.find("input.searchGender").change( function(e) {
+        var $this = $(this);
+        var chk = $this.prop("checked");
+        $root.find("input.searchGender").each( function() {
+          if( $(this).attr("id") !== $this.attr("id") ) {
+            $(this).prop("checked", false);
+          }
+        });
+        if( !chk ) {
+          $root.find("input#g_all").prop("checked", true);
+        }
+
+        // update search params
+        $root.modelcatUpdateSearchParams({
+          results: options.results,
+          form: "#" + $root.attr("id")
+        });
+      });
+    });
+  }
 
 })(jQuery);
 

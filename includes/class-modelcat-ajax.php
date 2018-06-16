@@ -36,14 +36,14 @@ class modelcat_ajax {
 
     // ---------------------------------------------------------------------------
     // gender
-    if( !empty( $s["gender_female"] ) || !empty( $s["gender_male"] )) {
+    if( !empty( $s["gender"] ) && $s["gender"] != "all" ) {
       $values = array();
-      if( !empty( $s["gender_female"] )) {
+      if( $s["gender"] == "male" ) {
+        array_push( $values, 1 );
+      } else if( $s["gender"] == "female" ) {
         array_push( $values, 2 );
       }
-      if( !empty( $s["gender_male"] )) {
-        array_push( $values, 1 );
-      }
+
       array_push( $metaquery, array(
         'key' => 'wpcf-gender',
         'value' => $values,
@@ -63,12 +63,7 @@ class modelcat_ajax {
 
     $q = new WP_Query();
 
-    $s = $_POST['s'];
-    if( !empty( $s )) {
-      $metaquery = modelcat_ajax::form_metaqueries($s);
-    } else {
-      $metaquery = array();
-    }
+    $metaquery = modelcat_ajax::form_metaqueries($_POST);
 
     $q->query( array(
       'post_type' => 'model',

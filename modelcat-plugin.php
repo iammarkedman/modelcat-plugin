@@ -11,6 +11,7 @@ class modelcat {
    */
   static function setup() {
     self::_include( 'modelcat-ajax' );
+    require_once __DIR__ ."/includes/utils.php";
     modelcat_ajax::setup();
   }
 
