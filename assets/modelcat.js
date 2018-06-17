@@ -63,7 +63,8 @@ var modelcatUpdateSearchDefaultSettings = {
     });
     var $singleFav = $(".single-favorite");
     if( $singleFav.length > 0 ) {
-      $singleFav.html('<i class="far fa-heart"></i> Add to favorites');
+      $singleFav.html('<i class="fa fa-thumbtack"></i> Add to favorites');
+      $(".model-page .polaroid .single-corner").removeClass("folded");
     }
     $(document).trigger("selectionChanged");
   }
@@ -110,9 +111,11 @@ var modelcatUpdateSearchDefaultSettings = {
       var inFavs = ( idx != -1 );
 
       if( inFavs ) {
-        $root.html('<i class="fas fa-heart"></i> Remove from favorites');
+        $root.html('<i class="fa fa-thumbtack"></i> Remove from favorites');
+        $(".model-page .polaroid .single-corner").addClass("folded");
       } else {
-        $root.html('<i class="far fa-heart"></i> Add to favorites');
+        $root.html('<i class="fa fa-thumbtack"></i> Add to favorites');
+        $(".model-page .polaroid .single-corner").removeClass("folded");
       }
 
       $root.click(function() {
@@ -125,12 +128,14 @@ var modelcatUpdateSearchDefaultSettings = {
           favs.splice(idx, 1);
           localStorage.setItem("fav", JSON.stringify(favs));
           $.updateLastActionTime();
-          $root.html('<i class="far fa-heart"></i> Add to favorites');
+          $root.html('<i class="fa fa-thumbtack"></i> Add to favorites');
+          $(".model-page .polaroid .single-corner").removeClass("folded");
         } else {
           favs.push(id);
           localStorage.setItem("fav", JSON.stringify(favs));
           $.updateLastActionTime();
-          $root.html('<i class="fas fa-heart"></i> Remove from favorites');
+          $root.html('<i class="fa fa-thumbtack"></i> Remove from favorites');
+          $(".model-page .polaroid .single-corner").addClass("folded");
         }
 
         $(document).trigger("selectionChanged");
