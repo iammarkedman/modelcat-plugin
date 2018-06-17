@@ -9,7 +9,7 @@ function nano(template, data) {
 }
 
 var ntmpl_searchResult = 
-  '<div class="col-4 result-item" data-id="{id}">' +
+  '<div class="col-md-4 result-item" data-id="{id}">' +
     '<div class="item-holder">' +
       '<a href="{permalink}">' +
       '<div class="item-img">' +
@@ -306,11 +306,51 @@ var modelcatUpdateSearchDefaultSettings = {
       var str = l + " " + (l === 1 ? "model" : "models");
       $root.find(".numSelected").html(str);
 
+      var url = modelcat.selected_url;
+      if( l > 0 ) {
+        url += "?id=" + favs.sort().join(",");
+      }
+      $('#modelcatSelectedFloater a.view-selected').attr("href", url);
+
       if( l < 1 ) {
         $root.removeClass("anySelected");
       } else {
         $root.addClass("anySelected");
       }
+    });
+  }
+
+  /**
+   * Selected models list: remove a model
+   */
+  $.fn.modelcatSelectedRemove = function() {
+    return this.each(function() {
+      var $root = $(this);
+
+      $root.click( function(e) {
+        e.preventDefault();
+
+        var id = $(this).data("id");
+        var favs = JSON.parse(localStorage.getItem("fav"));
+        var idx = favs.indexOf(id);
+        if( idx != -1 ) {
+          favs.splice(idx, 1);
+          localStorage.setItem("fav", JSON.stringify(favs));
+          $.updateLastActionTime();
+
+          var url = modelcat.selected_url;
+          if( favs.length > 0 ) {
+            url += "?id=" + favs.sort().join(",");
+          }
+          if (typeof (history.replaceState) != "undefined") {
+            var title = "Selected";
+            var obj = { Title: title, Url: url };
+            history.replaceState(obj, obj.Title, obj.Url);
+          }
+
+          $(this).parent().parent().fadeOut();
+        }
+      });
     });
   }
  

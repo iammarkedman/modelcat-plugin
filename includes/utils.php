@@ -44,7 +44,7 @@ function modelcat_runsearch() {
     }
     ?>
 
-      <div class="col-4 result-item" data-id="<?php echo $r['id']; ?>">
+      <div class="col-md-4 result-item" data-id="<?php echo $r['id']; ?>">
         <div class="item-holder">
           <a href="<?php echo $r['permalink']; ?>">
           <div class="item-img">
@@ -71,6 +71,38 @@ function modelcat_runsearch() {
   if( $i > 0 ) {
     echo '</div>';
   }
+}
+
+/**
+ * Display selected models
+ */
+function modelcat_selected( $ids ) {
+  $params = array(
+    "ids" => $ids
+  );
+
+  $results = modelcat_ajax::getresults($params);
+  foreach( $results as $r ): ?>
+
+    <div class="row selected-model" data-id="<?php echo $r['id']; ?>">
+      <div class="col-2">
+        <div class="item-img">
+          <a href="<?php echo $r['permalink']; ?>">
+            <img src="<?php echo $r['mainthumb']; ?>" class="img-fluid"/>
+          </a>
+          <div class="corner"></div>
+        </div>
+      </div>
+      <div class="col-10">
+        <a href="<?php echo $r['permalink']; ?>">
+          <h2><?php echo $r['name']; ?></h2>
+          <p><?php echo $r['info']['age']; ?> years old</p>
+        </a>
+        <a class="remove" data-id="<?php echo $r['id']; ?>" href="#"><i class="fa fa-times-circle"></i> Remove</a>
+      </div>
+    </div>
+
+  <?php endforeach; 
 }
 
 ?>

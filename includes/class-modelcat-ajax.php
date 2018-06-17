@@ -22,6 +22,7 @@ class modelcat_ajax {
     // Localize the script with new data
     wp_localize_script( 'modelcat', 'modelcat', [
       'ajax_url' => admin_url( 'admin-ajax.php' ),
+      'selected_url' => get_bloginfo('url') . "/selected/"
     ] );
 
     // Enqueued script with localized data.
@@ -63,18 +64,27 @@ class modelcat_ajax {
 
     $q = new WP_Query();
 
-    $metaquery = modelcat_ajax::form_metaqueries($params);
+    if( isset($params['ids']) && is_array($params['ids'])) {
+      $q->query( array(
+        'post_type' => 'model',
+        'order' => 'ASC',
+        'orderby' => 'post_title',
+        'post__in' => $params['ids']
+      ));
+    } else {
+      $metaquery = modelcat_ajax::form_metaqueries($params);
 
-    $q->query( array(
-      'post_type' => 'model',
-      'posts_per_page' => 1000,
-      'order' => 'ASC',
-      'orderby' => 'post_title',
-      'meta_query' => array(
-        'relation' => 'AND',
-        $metaquery
-      )
-    ));
+      $q->query( array(
+        'post_type' => 'model',
+        'posts_per_page' => 1000,
+        'order' => 'ASC',
+        'orderby' => 'post_title',
+        'meta_query' => array(
+          'relation' => 'AND',
+          $metaquery
+        )
+      ));
+    }
 
     $results = array();
     while( $q->have_posts() ) {
