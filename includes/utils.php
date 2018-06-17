@@ -44,7 +44,7 @@ function modelcat_runsearch() {
     }
     ?>
 
-      <div class="col-4">
+      <div class="col-4 result-item" data-id="<?php echo $r['id']; ?>">
         <div class="item-holder">
           <a href="<?php echo $r['permalink']; ?>">
           <div class="item-img">
@@ -55,9 +55,10 @@ function modelcat_runsearch() {
               </div>
             </div>
           </div>
-          <div class="name"><?php echo $r['name']; ?></div></a>
-          <div class="heart" data-id="<?php echo $r['id']; ?>"><i class="far fa-heart"></i></div>
+          <div class="name float-left"><?php echo $r['name']; ?></div></a>
+          <div class="corner"></div>
         </div>
+        <div class="float-right"><a class="select" href="#"><i class="fa fa-thumbtack"></i></a></div>
       </div>
 
     <?php

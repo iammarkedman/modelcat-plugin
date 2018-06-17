@@ -104,9 +104,9 @@ class modelcat_ajax {
       $mainthumb = "";
       $thumb_id = get_post_thumbnail_id( $post->ID );
       if( $thumb_id ) {
-        $imgurl_thumb = wp_get_attachment_image_src( $thumb_id, "thumbnail" );
-        $imgurl_full = wp_get_attachment_image_src( $thumb_id, "full" );
-        $mainthumb = $imgurl_full[0];
+        $imgurl_thumb = wp_get_attachment_image_src( $thumb_id, "model-thumb" );
+        $imgurl_full = wp_get_attachment_image_src( $thumb_id, "model-polaroid" );
+        $mainthumb = $imgurl_thumb[0];
         array_push( $images, array(
           "thumb" => $imgurl_thumb[0],
           "full" => $imgurl_full[0]

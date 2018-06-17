@@ -9,16 +9,22 @@ function nano(template, data) {
 }
 
 var ntmpl_searchResult = 
-  '<div class="col-4"><div class="item-holder"><a href="{permalink}">' +
-    '<div class="item-img">' +
-    '<img src="{mainthumb}" class="img-fluid"/>' + 
-    '<div class="overlay-holder"><div class="overlay">' +
-    '<ul><li>Age: {info.age}</li></ul>' +
-    '</div></div>' +
+  '<div class="col-4 result-item" data-id="{id}">' +
+    '<div class="item-holder">' +
+      '<a href="{permalink}">' +
+      '<div class="item-img">' +
+        '<img src="{mainthumb}" class="img-fluid"/>' +
+        '<div class="overlay-holder">' +
+          '<div class="overlay">' +
+            '<ul><li>Age: {info.age}</li></ul>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="name float-left">{name}</div></a>' +
+      '<div class="corner"></div>' +
     '</div>' +
-    '<div class="name">{name}</div></a>' +
-    '<div class="heart" data-id="{id}"><i class="far fa-heart"></i></div>' +
-  '</div></div>';
+    '<div class="float-right"><a class="select" href="#"><i class="fa fa-thumbtack"></i></a></div>' +
+  '</div>';
 
 var modelcatSearchDefaultSettings = {
   gender: "all"
@@ -52,8 +58,8 @@ var modelcatUpdateSearchDefaultSettings = {
    */
   $.clearSelectedModels = function() {
     localStorage.setItem("fav", JSON.stringify([]));
-    $(document).find(".heart").each( function() {
-      $(this).find("i").removeClass("fas").addClass("far");
+    $(document).find(".corner").each( function() {
+      $(this).removeClass("folded");
     });
     var $singleFav = $(".single-favorite");
     if( $singleFav.length > 0 ) {
@@ -69,7 +75,8 @@ var modelcatUpdateSearchDefaultSettings = {
     return this.each(function() {
       var $root = $(this);
 
-      $root.click(function() {
+      $root.find("a.select").click(function(e) {
+        e.preventDefault();
         var favs = JSON.parse(localStorage.getItem("fav"));
         var id = $root.data("id");
         var idx = favs.indexOf(id);
@@ -77,12 +84,12 @@ var modelcatUpdateSearchDefaultSettings = {
           favs.splice(idx, 1);
           localStorage.setItem("fav", JSON.stringify(favs));
           $.updateLastActionTime();
-          $root.find("i").removeClass("fas").addClass("far");
+          $root.find(".corner").removeClass("folded");
         } else {
           favs.push(id);
           localStorage.setItem("fav", JSON.stringify(favs));
           $.updateLastActionTime();
-          $root.find("i").removeClass("far").addClass("fas");
+          $root.find(".corner").addClass("folded");
         }
 
         $(document).trigger("selectionChanged");
@@ -137,15 +144,17 @@ var modelcatUpdateSearchDefaultSettings = {
   $.modelcatInitFavorites = function($root) {
     // check favorite states
     var favs = JSON.parse(localStorage.getItem("fav"));
-    $root.find(".heart").each( function() {
-      var id = $(this).data("id");
+    $root.find(".corner").each( function() {
+      var id = $(this).parent().parent().data("id");
       if( favs.includes(id) ) {
-        $(this).find("i").removeClass("far").addClass("fas");
+        $(this).addClass("folded");
+      } else {
+        $(this).removeClass("folded");
       }
     });
 
-    // bind hearts
-    $root.find(".heart").bindFavorite();
+    // bind selections
+    $root.find(".result-item").bindFavorite();
     $(document).trigger("selectionChanged");
   }
 
