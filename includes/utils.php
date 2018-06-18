@@ -85,7 +85,7 @@ function modelcat_selected( $ids ) {
   foreach( $results as $r ): ?>
 
     <div class="row selected-model" data-id="<?php echo $r['id']; ?>">
-      <div class="col-2">
+      <div class="col-md-2 offset-md-2">
         <div class="item-img">
           <a href="<?php echo $r['permalink']; ?>">
             <img src="<?php echo $r['mainthumb']; ?>" class="img-fluid"/>
@@ -93,7 +93,7 @@ function modelcat_selected( $ids ) {
           <div class="corner"></div>
         </div>
       </div>
-      <div class="col-10">
+      <div class="col-md-6">
         <a href="<?php echo $r['permalink']; ?>">
           <h2><?php echo $r['name']; ?></h2>
           <p><?php echo $r['info']['age']; ?> years old</p>
