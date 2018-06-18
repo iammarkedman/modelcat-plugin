@@ -342,16 +342,54 @@ var modelcatUpdateSearchDefaultSettings = {
           if( favs.length > 0 ) {
             url += "?id=" + favs.sort().join(",");
           }
+
           if (typeof (history.replaceState) != "undefined") {
             var title = "Selected";
             var obj = { Title: title, Url: url };
             history.replaceState(obj, obj.Title, obj.Url);
           }
 
-          $(this).parent().parent().fadeOut();
+          $(this).parent().parent().fadeOut(400, function() {
+            if( favs.length == 0 ) {
+              $(".container.selected-models").append('<div class="row"><div class="col-md-8 offset-md-2">No models selected.</div></div>');
+            }
+          });
         }
       });
     });
+  }
+
+  /**
+   * Selected models: check for changes between page loads
+   */
+  $.modelcatSelectedCheckChange = function() {
+    var changed = false;
+    var favs = JSON.parse(localStorage.getItem("fav"));
+
+    $(".row.selected-model").each( function() {
+      var id = $(this).data("id");
+      var idx = favs.indexOf(id);
+      if( idx == -1 ) {
+        changed = true;
+        $(this).hide();
+      } else {
+        $(this).show();
+      }
+    });
+
+    if( changed ) {
+      var url = modelcat.selected_url;
+      if( favs.length > 0 ) {
+        url += "?id=" + favs.sort().join(",");
+      } else {
+        $(".container.selected-models").append('<div class="row"><div class="col-md-8 offset-md-2">No models selected.</div></div>');
+      }
+      if (typeof (history.replaceState) != "undefined") {
+        var title = "Selected";
+        var obj = { Title: title, Url: url };
+        history.replaceState(obj, obj.Title, obj.Url);
+      }
+    }
   }
  
 })(jQuery);

@@ -84,7 +84,7 @@ function modelcat_selected( $ids ) {
   $results = modelcat_ajax::getresults($params);
   foreach( $results as $r ): ?>
 
-    <div class="row selected-model" data-id="<?php echo $r['id']; ?>">
+    <div class="row selected-model" data-id="<?php echo $r['id']; ?>" style="display:none">
       <div class="col-md-2 offset-md-2">
         <div class="item-img">
           <a href="<?php echo $r['permalink']; ?>">
