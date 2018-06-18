@@ -14,7 +14,7 @@ var ntmpl_searchResult =
       '<a href="{permalink}">' +
       '<div class="item-img">' +
         '<img src="{mainthumb}" class="img-fluid"/>' +
-        '<div class="overlay-holder">' +
+        '<div class="overlay-holder d-none d-md-block">' +
           '<div class="overlay">' +
             '<ul><li>Age: {info.age}</li></ul>' +
           '</div>' +

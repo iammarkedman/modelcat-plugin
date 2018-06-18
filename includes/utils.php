@@ -49,7 +49,7 @@ function modelcat_runsearch() {
           <a href="<?php echo $r['permalink']; ?>">
           <div class="item-img">
             <img src="<?php echo $r['mainthumb']; ?>" class="img-fluid"/>
-            <div class="overlay-holder">
+            <div class="overlay-holder d-none d-md-block">
               <div class="overlay">
                 <ul><li>Age: <?php echo $r['info']['age']; ?></li></ul>
               </div>
