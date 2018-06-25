@@ -225,8 +225,8 @@ var modelcatUpdateSearchDefaultSettings = {
           // render
           $root.renderSearchResults( response );
         })
-        .fail(function(response) {
-          console.log("FAIL", response);
+        .fail(function( jqXHR, response) {
+          console.log("FAIL", jqXHR);
         });
     });
   };

@@ -9,7 +9,7 @@ class modelcat_ajax {
     $action = 'getresults';
     add_action( 'wp_enqueue_scripts', __CLASS__ .'::enqueue_scripts' );
     add_action( 'wp_ajax_getresults', __CLASS__ .'::ajax_getresults' );
-    add_action( 'wp_ajax_nopriv_getresultsname_of_action', __CLASS__ .'::ajax_getresults' );
+    add_action( 'wp_ajax_nopriv_getresults', __CLASS__ .'::ajax_getresults' );
   }
 
   /**
