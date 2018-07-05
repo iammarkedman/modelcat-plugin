@@ -213,6 +213,9 @@ var modelcatUpdateSearchDefaultSettings = {
     return this.each(function() {
       var $root = $(this);
 
+      $root.empty();
+      $root.append('<div class="row"><div class="col" style="text-align:center;margin-top:60px"><img src="' + modelcat.ajaxloader_imgurl + '" alt=""/></div></div>');
+
       var datastring = "action=getresults&" + optionsStr;
       $.ajax({
         url: modelcat.ajax_url,

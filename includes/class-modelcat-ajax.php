@@ -22,7 +22,8 @@ class modelcat_ajax {
     // Localize the script with new data
     wp_localize_script( 'modelcat', 'modelcat', [
       'ajax_url' => admin_url( 'admin-ajax.php' ),
-      'selected_url' => get_bloginfo('url') . "/selected/"
+      'selected_url' => get_bloginfo('url') . "/selected/",
+      'ajaxloader_imgurl' => get_bloginfo('template_url') . "/img/ajax-load-200px.gif"
     ] );
 
     // Enqueued script with localized data.
